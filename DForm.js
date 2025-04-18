@@ -229,7 +229,7 @@ function createFormJson(schema, jsonObj, fromCon, jsonField){
 // --------------------------------------------DROW Functions-----------------------------------------------
 
 //create Parent Row Container
-function dRow_ContainerCreate(parentContainer , con_id, schema){
+window.dRow_ContainerCreate = function dRow_ContainerCreate(parentContainer , con_id, schema){
 
     let div = document.createElement('div')
     div.id = con_id
