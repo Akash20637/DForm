@@ -1,1 +1,994 @@
-function dForm_Create(a,b,c){const d=document.querySelector(b);let e=Array.from(d.querySelector("form").childNodes).slice(0,-2).filter(a=>"DIV"===a.tagName);e.forEach(a=>{a.innerHTML="",count=0}),Object.keys(a).forEach(b=>{let{e_type:e,row_Schema:f,e_name:g,group_con:h}=a[b];const i=d.querySelector(`.${h}`);dRow_ContainerCreate(i,b,a[b]);const j=document.querySelector(`#${b}`);if("dynamicAccordion"===e){let a=c?.[h]?c[h]:null;accordionCreate(i,j,a,f,{e_name:g,e_type:e})}else if("staticAccordion"===e){let a=c?.[h]?c[h]:null;accordionCreate(i,j,a,f,{e_name:g,e_type:e})}else handleDynamicRows(j,a,b,c)})}function accordionCreate(a,b,c,d,e){if(!("dynamicAccordion"===e.e_type)){let a=createAccordion(b,`${b.id}-${count}`,`${e.e_name}`,null);Object.keys(d).forEach(b=>{dRow_ContainerCreate(a,b,d[b]);const e=a.querySelector(`#${b}`);handleDynamicRows(e,d,b,c?c:null)})}else if(c)a.innerHTML="",c.forEach((f,g)=>{count++;let h={buttonText:1==g+1?"+":"-",buttonFun:1==g+1?"_addAccordion(event)":"_deleteAccordion(event)"},i=1==g+1?b.id:`${b.id}_${count}`,j=b.cloneNode(!0);j.id=i,a.appendChild(j);let k=createAccordion(j,`${b.id}-${count}`,`${e.e_name}-${count}`,h);Object.keys(d).forEach(a=>{dRow_ContainerCreate(k,a,d[a]);const b=k.querySelector(`#${a}`);handleDynamicRows(b,d,a,c[g])})});else{count++;let a=createAccordion(b,`${b.id}-${count}`,`${e.e_name}`,{buttonText:"+",buttonFun:"_addAccordion(event)"});Object.keys(d).forEach(b=>{dRow_ContainerCreate(a,b,d[b]);const c=a.querySelector(`#${b}`);handleDynamicRows(c,d,b,null)})}}function handleDynamicRows(a,b,c,d){if("dynamicRow"===b[c].e_type){if(d){let e=d[b[c].e_name];e.forEach((d,e)=>{const f={buttonText:"1"==e+1?"+":"-",buttonFun:"1"==e+1?"_addRow(event)":"_deleteRow(event)"};dRow_Create(a,b[c].row_Schema,f)}),dFormSelectedValue(a,e)}else dRow_Create(a,b[c].row_Schema,{buttonText:"+",buttonFun:"_addRow(event)"});}else if(dRow_Create(a,b[c].row_Schema,null),d){let e={};b[c].row_Schema.forEach(a=>{e[a.f_name]=d[a.f_name]}),dFormSelectedValue(a,[e])}}function dFormSelectedValue(a,b){let c=a.querySelectorAll(".row");c.forEach((a,c)=>{let d=b[c];a.childNodes.forEach(a=>{let b=a.querySelector("input, select");if(b)if(Array.isArray(d[b.name])){b.value=JSON.stringify(d[b.name]);let c=a.querySelector("div"),e=new Event("click");c.dispatchEvent(e)}else if(d[b.name])if(b.hasAttribute("onclick")){let a=new Event("click");b.value=d[b.name],b.dispatchEvent(a)}else{b.value=d[b.name];let a=new Event("change");b.dispatchEvent(a)}})})}function dFormGroupStaticData(a,b){let c=Object.keys(a),d={};return c.forEach(c=>{let e=a[c].rowType;if("Static"===e){let e=a[c].row_Schema,f={};e.forEach(a=>f[a.f_name]=b[a.f_name]),d[c]=f}}),d}function createFormJson(a,b,c,d){checkConType(a,b),Object.keys(a).forEach(d=>{let{group_con:e,e_type:f,e_name:g}=a[d];if("staticAccordion"===f){let f=c.querySelector(`.${e}`);b[e]={};let g=Array.from(f.childNodes)[0],h=g.childNodes[0].querySelector(".accordion-body");checkConType(a[d].row_Schema,b[e],h)}if("dynamicAccordion"===f){let f=c.querySelector(`.${e}`),g=Array.from(f.childNodes);b[e]=[],g.forEach(c=>{let f=c.querySelector(".row"),g={};b[e].push(g);let h=f.childNodes[0].querySelector(".accordion-body");checkConType(a[d].row_Schema,g,h)})}}),console.log(JSON.stringify(b)),d.value=JSON.stringify(b)}function dCreateMultiSelect(a,b){let c=document.createElement("div");a.f_display||c.classList.add("d-none");let d=document.createElement("input");d.classList.add("d-none"),d.name=a.f_name,d.value=JSON.stringify([]),c.classList.add(a.f_display_name,`col-lg-${a.f_width}`);let e=document.createElement("label");e.classList.add("form-label","fw-bold"),e.textContent=a.f_display_name;let f=document.createElement("div");f.classList.add("list","form-select","ik-txt3"),f.style.cssText="position: relative; height: 28px; padding: 0px",f.setAttribute("onclick",a.a_onChange);let g=document.createElement("p");g.classList.add("ml-2","mt-1"),g.textContent="-------";let h=document.createElement("div");h.classList.add("d-none","items"),h.style.cssText="position: absolute; top: -25px; height: 18vh; overflow: scroll; background-color: white; box-shadow : 0px 4px 12px rgba(0, 0, 0, 0.2); border : 1px solid rgba(0, 0, 0, 0.3); width:18vw;",f.appendChild(g),f.appendChild(d),f.appendChild(h),c.appendChild(e),c.appendChild(f),b.appendChild(c),0!=a.v_options.length&&dCreateMultiSelectOption(h,a.v_options)}function dCreateMultiSelectOption(a,b){a.innerHTML="";let c=document.createDocumentFragment(),d=document.createElement("div");d.classList.add("d-flex","justify-between"),d.style.cssText="border-bottom : 1px solid rgba(0, 0, 0, 0.3);",c.appendChild(d);let e=document.createElement("button");e.type="button",e.classList.add("btn"),e.style.cssText="padding: 2px; width: 126px; font-weight: bold;",e.setAttribute("onclick","selectAllOptions(event)"),e.textContent=`SelectAll`;let f=document.createElement("button");f.type="button",f.classList.add("btn"),f.style.cssText="padding: 2px; width: 126px; font-weight: bold;",f.setAttribute("onclick","clearAllOptions(event)"),f.textContent=`ClearAll`;let g=document.createElement("button");g.type="button",g.classList.add("btn"),g.style.cssText="padding: 2px; width: 126px; font-weight: bold;",g.setAttribute("onclick","closeDropDown(event)"),g.textContent=`Close`,d.appendChild(e),d.appendChild(f),d.appendChild(g),b.forEach(a=>{let b=document.createElement("button");b.classList.add("selectable","col-md-12","btn","text-dark","text-start","py-0"),b.value=`${a}`,b.type="button",b.setAttribute("onclick","selectMultipleOption(this)");let d=document.createElement("span");d.innerText=`${a}`;let e=document.createElement("i");e.classList.add("text-dark"),d.appendChild(e),b.appendChild(d),c.appendChild(b)}),a.appendChild(c)}function dToggleMultiOption(a,b){a.classList.toggle("selected");const c=a.querySelector("span"),d=a.querySelector("span i");d.classList.toggle("bi-check"),d.classList.toggle("text-dark"),a.classList.contains("selected")?(a.style.backgroundColor="#e8e8e8",dAddMultiSelectOption(a.value,b)):(a.style.backgroundColor="",dRemoveMultiSelectOption(a.value,b))}function dAddMultiSelectOption(a,b){let c=b.querySelector("p"),d=b.querySelector("input"),e=JSON.parse(d.value||"[]");e.includes(a)||e.push(a);const f=JSON.stringify(e);d.value=f,d.setAttribute("value",f),c.textContent=2>=e.length?e.join(", "):`${e.length} Selected`}function dRemoveMultiSelectOption(a,b){let c=b.querySelector("p"),d=b.querySelector("input"),e=JSON.parse(d.value),f=e.indexOf(a);e.splice(f,1);const g=JSON.stringify(e);d.value=g,d.setAttribute("value",g),c.textContent=2>=e.length?e.join(", "):`${e.length} Selected`,0>=e.length&&(c.textContent="--------")}function dAddMultipleOptions(a,b){let c=a.querySelector("div");const d=c.querySelectorAll("button");d.forEach(c=>{const d=c.querySelector("span i");b.includes(c.value)&&(d.classList.add("bi-check"),d.classList.add("text-dark"),c.classList.add("selected"),c.style.backgroundColor="#e8e8e8",dAddMultiSelectOption(c.value,a))})}function dClearAll(a,b){let c=b.querySelector("div"),d=new Event("click");a.forEach(a=>dRemoveMultiSelectOption(a,b));const e=c.querySelectorAll("button");e.forEach(a=>{if(a.classList.contains("selected")){a.classList.remove("selected"),a.style.backgroundColor="";const b=a.querySelector("span"),c=a.querySelector("span i");c.classList.toggle("bi-check"),c.classList.toggle("text-dark")}})}function createDynamicOptions(a,b){let c=a.currentTarget.querySelector("div"),d=c.parentNode.querySelector("input");c.classList.toggle("d-none"),dCreateMultiSelectOption(c,b);let e=c.parentNode.querySelector("input").value;const f=c.querySelectorAll("button");f.forEach(a=>{const b=a.querySelector("span i");JSON.parse(e).includes(a.value)&&(b.classList.add("bi-check"),b.classList.add("text-dark"),a.classList.add("selected"),a.style.backgroundColor="#e8e8e8")})}window.dCreateMultiSelect=dCreateMultiSelect,window.dCreateMultiSelectOption=dCreateMultiSelectOption,window.dToggleMultiOption=dToggleMultiOption,window.dAddMultiSelectOption=dAddMultiSelectOption,window.dRemoveMultiSelectOption=dRemoveMultiSelectOption,window.dAddMultipleOptions=dAddMultipleOptions,window.dClearAll=dClearAll,window.createDynamicOptions=createDynamicOptions;function dRow_ContainerCreate(a,b,c){let d=document.createElement("div");return d.id=b,d.classList.add("mt-2",c.e_name),d.style.display=c.e_display?"block":"none",a.appendChild(d),d}function dRow_Create(a,b,c){let d=document.createElement("div");d.classList.add("row","mt-2"),a.appendChild(d);let e=["text","email","number","password","date","time","date_range","phone"];if(b.forEach(a=>{e.includes(a.f_type)?createInputFields(a,d):"single_select"===a.f_type?createSingleSelectFields(a,d):"data_list"===a.f_type?createDataList(a,d):"multi_select"===a.f_type&&dCreateMultiSelect(a,d)}),c){a.style.border="0.5px dotted black",a.style.padding="10px",a.style.borderRadius="5px";let b=document.createElement("div");b.textContent=c.buttonText,b.classList.add("addButton","col-lg-2","mt-4"),b.style.cssText="cursor : pointer",b.setAttribute("onclick",c.buttonFun),b.style.setProperty("display","block","important"),d.appendChild(b)}}function dRowAdd(a,b){let c,d,e=a.target.parentNode.parentNode;if("accordion-body"===e.parentNode.classList[0]){let f=a.target.parentNode.closest(".accordion").parentNode.parentNode.id,g=f.includes("_")?f.split("_")[0]:f;c=b[g].row_Schema[e.id].row_Schema,d={buttonText:"-",buttonFun:"_deleteRow(event)"}}else c=b[e.id].row_Schema,d={buttonText:"-",buttonFun:"_deleteRow(event)"};let f=e.id,g=dRow_ValidateSchema(c);dRow_Create(e,c,d)}function dRow_Delete_Accordion(a){let b=a.parentNode;b.removeChild(a)}function dRow_SetValues(a,b){a.innerHTML="";let c=document.createElement("option"),d=document.createDocumentFragment();c.textContent="-------",c.value="",c.selected=!0,c.disabled=!0,d.appendChild(c),b&&0!=b.length&&(b.forEach(a=>{let b=document.createElement("option");b.textContent=a,b.value=a,d.appendChild(b)}),a.appendChild(d))}function dRow_ValidateSchema(a){let b=["text","email","number","password","date","time","date_range","phone","multi_select","single_select"],c=new Set,d=!0;return a.forEach(a=>{c.has(a.f_display_name)?(console.error("Display Name Should be Unique"),d=!1):c.add(a.f_display_name),b.includes(a.f_type)||(console.error("Type field Invalid ! "),d=!1),a.f_display_name&&a.f_type&&a.f_name||(console.error(`Missing required property in field: ${JSON.stringify(a)}`),d=!1),"boolean"!=typeof a.f_required&&(console.error(`Invalid value for 'f_required'. It should be a boolean: ${a.f_display_name}`),d=!1),"multi_select"!==a.f_type&&"single_select"!==a.f_type||Array.isArray(a.v_options)||(console.error(`Options are missing or invalid for field: ${a.f_display_name}`),d=!1)}),d}function createInputFields(a,b){let c=document.createElement("div");c.classList.add(a.f_display_name,`col-lg-${a.f_width}`),a.f_display||c.classList.add("d-none"),"always"===a.f_display&&c.style.setProperty("display","block","important");let d=document.createElement("label");d.classList.add("form-label","fw-bold"),d.textContent=a.f_display_name;let e=document.createElement("input");e.classList.add("form-control","ik-txt3","py-1"),e.name=a.f_name,e.type=a.f_type,e.value=a.v_default,e.setAttribute("onclick",a.a_onChange),c.appendChild(d),c.appendChild(e),a.f_placeholder&&(e.placeholder=a.f_placeholder),a.v_min!==void 0&&(e.min=a.v_min),a.v_max!==void 0&&(e.max=a.v_max),a.v_min_len!==void 0&&"number"!==e.type&&(e.minLength=a.v_min_len),a.v_max_len!==void 0&&"number"!==e.type&&(e.maxLength=a.v_max_len),a.f_required&&(e.required=!0),b.appendChild(c)}function createSingleSelectFields(a,b){let c=document.createElement("div");a.f_display||c.classList.add("d-none"),"always"===a.f_display&&c.style.setProperty("display","block","important");let d=document.createElement("label");d.classList.add("form-label","fw-bold"),d.textContent=a.f_display_name;let e=document.createElement("select");e.name=a.f_name,e.classList.add("form-select","ik-txt3","py-1"),a.a_onChange&&e.setAttribute("onchange",a.a_onChange),e.required=a.f_required,c.classList.add(a.f_display_name,`col-lg-${a.f_width}`),c.appendChild(d),c.appendChild(e),b.appendChild(c),dRow_SetValues(e,a.v_options),e.value=a.v_default}function createDataList(a,b){let c=document.createElement("div");c.classList.add(a.f_display_name,`col-lg-${a.f_width}`),a.f_display||c.classList.add("d-none"),"always"===a.f_display&&c.style.setProperty("display","block","important"),b.appendChild(c);let d=document.createElement("label");d.classList.add("form-label","fw-bold"),d.textContent=a.f_display_name,c.appendChild(d);const e=document.createElement("input");e.setAttribute("list","items"),e.setAttribute("id","myInput"),e.setAttribute("name",a.f_name),e.classList.add("form-select","ik-txt3","py-1"),c.appendChild(e);const f=document.createElement("datalist");f.setAttribute("id","items"),c.appendChild(f),dRow_SetValues(f,a.v_options)}function createAccordion(a,b,c,d){let e=document.createElement("div");e.classList.add("row"),a.appendChild(e);let f=document.createElement("div");f.classList.add("accordion","col-lg-12"),e.appendChild(f);let g=document.createElement("div");g.classList.add("accordion-item","w-100"),f.appendChild(g);let h=document.createElement("button");h.classList.add("accordion-button","collapsed","ik-h2","py-1","shadow-none","text-dark","fw-bold"),h.type="button",h.id=`${b}-header`,h.setAttribute("data-bs-toggle","collapse"),h.setAttribute("data-bs-target",`#${b}`),h.setAttribute("aria-expanded","false"),h.setAttribute("aria-controls",b),h.innerHTML=`${c}`,g.appendChild(h);let i=document.createElement("div");i.id=b,i.classList.add("accordion-collapse","collapse","mt-3"),i.setAttribute("aria-labelledby",h.id),i.setAttribute("data-bs-parent",`#${a.id}`),g.appendChild(i);let j=document.createElement("div");if(j.classList.add("accordion-body","pt-0"),i.appendChild(j),d){f.classList.remove("col-lg-12"),f.classList.add("col-lg-11");let a=document.createElement("div");a.textContent=d.buttonText,a.classList.add("addButton","col-lg-1"),a.style.cssText="cursor : pointer",a.setAttribute("onclick",d.buttonFun),e.appendChild(a)}return j}function _accordionAdd(a,b,c){let d=a.target.parentNode.parentNode.id,{e_type:e,e_display:f,e_name:g,row_Schema:h,group_con:i}=b[d];const j=a.target.parentNode.parentNode.parentNode;let k=`${d.split("_")[0]}_${c}`,l=dRow_ContainerCreate(j,k,b[d]),m=createAccordion(l,`ac-${c}`,`${g}-${c}`,{buttonText:"-",buttonFun:"_deleteAccordion(event)"});Object.keys(h).forEach(a=>{let b=dRow_ContainerCreate(m,a,h[a]);handleDynamicRows(b,h,a,null)})}function mappRows(a){let b,c,d=a.target.parentNode.parentNode.parentNode,e=d.closest(".row").parentNode,f=a.target.parentNode.querySelector("label").textContent,g=schema[e.id].row_Schema[d.id].row_Schema,h=g.find(a=>a.f_display_name===f);h.b_rows.forEach(f=>{let g=schema[e.id].row_Schema[f].row_Schema;d.id===f?(b=d,c=a.target.parentNode.parentNode.childNodes):(b=document.querySelector(`#${f}`),c=b.querySelector(".row").childNodes),b.style.display="block";let h=g.filter(b=>b.b_name.includes(a.target.value)).map(a=>a.f_display_name);Array.from(c).forEach(a=>{const b=h.some(b=>a.classList.contains(b));b?a.classList.remove("d-none"):a.classList.add("d-none")})})}async function getResponse(a,b,c,d=null,e=null){let f=new FormData;if(d)for(let a in d)d.hasOwnProperty(a)&&f.append(a,d[a]);const g={method:a,...("GET"!==a&&{headers:{...(e&&{"X-CSRFToken":e})},...(d&&{body:f})})};try{const a=await fetch(b,g);if(!a.ok)return console.error("Invalid response:",a.status,a.statusText),null;let d=await a.json();c.response=d}catch(a){return console.error("Fetch error:",a),null}}function checkConType(a,b,c=null){Object.keys(a).forEach(d=>{let{e_type:e,e_name:f}=a[d];if("dynamicRow"===e){let a=c?c.querySelector(`#${d}`):document.querySelector(`#${d}`);createDynamicRowJson(b,a,f)}if("staticRow"===e){let a=c?c.querySelector(`#${d}`):document.querySelector(`#${d}`);createStaticValueObj(a,b)}})}function createStaticValueObj(a,b){let c=a.querySelector(".row"),d=c.querySelectorAll("div");d.forEach(a=>{let c=a.classList.contains("d-none");if(!c){let c=a.querySelector("input, select");c&&(b[c.name]=c.value)}})}function createDynamicRowJson(a,b,c){let d=b.querySelectorAll(".row"),e=[];d.forEach(a=>{let b={},c=a.querySelectorAll("div");c.forEach(a=>{let c=a.classList.contains("d-none");if(!c){let c=a.querySelector("input, select");c&&(b[c.name]=c.value)}}),e.push(b)}),a[c]=e}(function(a,b){const c=b();if("undefined"!=typeof window)for(const a in c)window[a]=c[a];"undefined"!=typeof module&&"undefined"!=typeof module.exports?module.exports=c:a.MyLibrary=c})("undefined"==typeof window?global:window,function(){return{dRow_ContainerCreate,dRow_Create,dRowAdd,dRow_Delete_Accordion,dRow_ValidateSchema,createInputFields,createSingleSelectFields,createDataList,createAccordion,_accordionAdd,mappRows,getResponse,checkConType,createStaticValueObj,createDynamicRowJson}});
+
+// Create Forms
+function dForm_Create(form_schema, modalId, values) {
+    const modalContainer = document.querySelector(modalId);
+
+    //Empty All Child
+    let child = Array.from(modalContainer.querySelector('form').childNodes).slice(0, -2).filter((con) => con.tagName === 'DIV');
+    child.forEach((con) => {
+        con.innerHTML = ''
+        count = 0
+    })
+
+    // Iterate through the form schema to create rows or accordions
+    Object.keys(form_schema).forEach((con_key) => {
+        let { e_type, row_Schema, e_name, group_con } = form_schema[con_key];
+
+        const groupContainer = modalContainer.querySelector(`.${group_con}`)
+
+        dRow_ContainerCreate(groupContainer, con_key, form_schema[con_key]);
+        const parentCon = document.querySelector(`#${con_key}`);
+
+        if (e_type === "dynamicAccordion"){
+           let accVal = values?.[group_con] ? values[group_con] : null;
+           accordionCreate(groupContainer, parentCon, accVal, row_Schema, {e_name, e_type})
+        }
+        else if(e_type === "staticAccordion"){
+            let accVal = values?.[group_con] ? values[group_con] : null;
+            accordionCreate(groupContainer, parentCon, accVal, row_Schema, {e_name, e_type})
+        }
+        else {
+            handleDynamicRows(parentCon, form_schema, con_key, values);
+        }
+    });
+}
+
+//Create Accordion
+function accordionCreate(groupContainer, parentCon, accordion_values, row_Schema, eleObj){
+
+    if(eleObj.e_type === "dynamicAccordion"){
+
+        if(accordion_values){
+           //Create Multiple Accordion
+           groupContainer.innerHTML = ''
+           accordion_values.forEach((obj, index)=>{   //Create Accordion On Basis Of this Loop
+
+                count++
+                let buttonConfig = {
+                    buttonText: index+1 == 1 ? '+' : '-' ,
+                    buttonFun: index+1 == 1 ? '_addAccordion(event)'  : '_deleteAccordion(event)'
+                }
+
+                let conId = index+1 == 1 ? parentCon.id : `${parentCon.id}_${count}`
+                let shallowCopy = parentCon.cloneNode(true)
+                shallowCopy.id = conId
+
+                groupContainer.appendChild(shallowCopy)
+                let accordionBody = createAccordion(shallowCopy, `${parentCon.id}-${count}`,`${eleObj.e_name}-${count}`, buttonConfig);
+
+                Object.keys(row_Schema).forEach((key) => {
+                    dRow_ContainerCreate(accordionBody, key, row_Schema[key]);
+                    const acParentCon = accordionBody.querySelector(`#${key}`);
+
+                    handleDynamicRows(acParentCon, row_Schema, key, accordion_values[index]);
+                });
+           })
+        }
+        else{
+            count++
+            let buttonConfig = { buttonText: '+', buttonFun: '_addAccordion(event)' }
+            let accordionBody = createAccordion(parentCon, `${parentCon.id}-${count}`,`${eleObj.e_name}` , buttonConfig);
+            Object.keys(row_Schema).forEach((key) => {
+                dRow_ContainerCreate(accordionBody, key, row_Schema[key]);
+                const acParentCon = accordionBody.querySelector(`#${key}`);
+                handleDynamicRows(acParentCon, row_Schema, key, null);
+            });
+        }
+    }
+    else{
+        //For Static Accordion Code
+        let accordionBody = createAccordion(parentCon, `${parentCon.id}-${count}`,`${eleObj.e_name}` , null);
+        Object.keys(row_Schema).forEach((key) => {
+            dRow_ContainerCreate(accordionBody, key, row_Schema[key]);
+            const acParentCon = accordionBody.querySelector(`#${key}`);
+            handleDynamicRows(acParentCon, row_Schema, key, accordion_values? accordion_values : null);
+        });
+    }
+
+}
+
+// Handle Dynamic and Static Rows
+function handleDynamicRows(parentRowContainer, formSchema, key, rowVal){
+    if (formSchema[key]['e_type'] === "dynamicRow") {
+        if (rowVal) {
+            let value = rowVal[formSchema[key]['e_name']]
+
+            value.forEach((obj, index) => {
+
+                const buttonConfig = {
+                    buttonText: index+1 == '1' ? '+' : '-',
+                    buttonFun: index+1 == '1' ? '_addRow(event)' : '_deleteRow(event)',
+                };
+                dRow_Create(parentRowContainer, formSchema[key]['row_Schema'], buttonConfig);
+            });
+            dFormSelectedValue(parentRowContainer, value)
+
+        }
+        else {
+            dRow_Create(parentRowContainer, formSchema[key]['row_Schema'], { buttonText: '+', buttonFun: '_addRow(event)'});
+        }
+    } else {
+        dRow_Create(parentRowContainer, formSchema[key]['row_Schema'], null);
+        if (rowVal){
+            let staticObj = {};
+            formSchema[key]['row_Schema'].forEach((rowObj)=>{
+                staticObj[rowObj['f_name']] = rowVal[rowObj['f_name']]
+            })
+            dFormSelectedValue(parentRowContainer, [staticObj])
+        }
+    }
+}
+
+
+//Add values Trigger Event
+function dFormSelectedValue(parentRowCon, rowValues){
+
+    let rows = parentRowCon.querySelectorAll('.row');
+
+    rows.forEach((row, index) => {
+
+       let value = rowValues[index]
+
+       row.childNodes.forEach((con)=>{
+
+          let field = con.querySelector('input, select')
+          if(field){
+
+             if(Array.isArray(value[field.name])){
+                field.value = JSON.stringify(value[field.name])
+                let rowConList = con.querySelector('div')
+                let click = new Event('click')
+                rowConList.dispatchEvent(click)
+             }
+             else{
+                if(value[field.name]){
+
+                    if(field.hasAttribute('onclick')){
+                        let click = new Event('click')
+                        field.value = value[field.name]
+                        field.dispatchEvent(click)
+                    }
+                    else{
+                      field.value = value[field.name]
+                      let change = new Event('change')
+                      field.dispatchEvent(change)
+                    }
+                }
+             }
+          }
+       })
+    });
+}
+
+
+
+//Group Static Data
+function dFormGroupStaticData(schema, values){
+    let schemaKeys = Object.keys(schema)
+    let groupValue = {}
+
+    schemaKeys.forEach((key)=>{
+      let rowType = schema[key]['rowType']
+
+      if(rowType === 'Static'){
+         let schemaObj = schema[key]['row_Schema']
+         let groupVal = {}
+
+         schemaObj.forEach((obj)=> groupVal[obj.f_name] = values[obj.f_name])
+         groupValue[key] = groupVal
+      }
+    })
+
+    return groupValue
+}
+
+
+//Create Form Json
+function createFormJson(schema, jsonObj, fromCon, jsonField){
+
+   checkConType(schema, jsonObj)
+   Object.keys(schema).forEach((key)=>{
+
+       let {group_con, e_type, e_name} = schema[key]
+
+       if(e_type === 'staticAccordion'){
+
+         let accordionParent = fromCon.querySelector(`.${group_con}`)
+         jsonObj[group_con] = {}
+
+         let rowCon = Array.from(accordionParent.childNodes)[0]
+         let accordionBody = rowCon.childNodes[0].querySelector('.accordion-body')
+
+         checkConType(schema[key]['row_Schema'], jsonObj[group_con], accordionBody)
+       }
+
+       if(e_type === 'dynamicAccordion'){
+
+          let accordionParent = fromCon.querySelector(`.${group_con}`)
+          let accordionChild = Array.from(accordionParent.childNodes)
+
+          jsonObj[group_con] = []
+
+          accordionChild.forEach((con)=>{
+              let rowCon = con.querySelector('.row')
+
+              let accRowObj = {}
+              jsonObj[group_con].push(accRowObj)
+
+              let accordionBody = rowCon.childNodes[0].querySelector('.accordion-body')
+              checkConType(schema[key]['row_Schema'], accRowObj, accordionBody)
+          })
+       }
+   })
+   console.log(JSON.stringify(jsonObj))
+   jsonField.value = JSON.stringify(jsonObj)
+}
+
+
+
+// --------------------------------------------DROW Functions-----------------------------------------------
+
+//create Parent Row Container
+function dRow_ContainerCreate(parentContainer , con_id, schema){
+
+    let div = document.createElement('div')
+    div.id = con_id
+    div.classList.add('mt-2', schema['e_name'])
+
+    if (schema['e_display']) {
+       div.style.display = 'block';
+    } else {
+        div.style.display = 'none';
+    }
+    parentContainer.appendChild(div)
+    return div
+}
+
+// Create Row
+function dRow_Create(parentContainer, row_schema, buttonObj){
+    let f_row_container =  document.createElement('div')
+    f_row_container.classList.add('row', 'mt-2')
+
+    parentContainer.appendChild(f_row_container)
+    let inputListType = ["text", "email", "number", "password", "date", "time", "date_range", "phone"]
+
+    row_schema.forEach((field_schema)=>{
+
+        if(inputListType.includes(field_schema.f_type)){
+           createInputFields(field_schema, f_row_container)
+        }
+        else if(field_schema.f_type === "single_select"){
+            createSingleSelectFields(field_schema, f_row_container)
+        }
+        else if(field_schema.f_type === "data_list"){
+            createDataList(field_schema, f_row_container)
+        }
+        else if(field_schema.f_type === "multi_select"){
+            dCreateMultiSelect(field_schema, f_row_container)
+        }
+    })
+
+    if(buttonObj){
+        parentContainer.style.border = "0.5px dotted black";
+        parentContainer.style.padding = "10px";
+        parentContainer.style.borderRadius = "5px";
+
+        let buttonCon =  document.createElement('div')
+        buttonCon.textContent = buttonObj['buttonText']
+        buttonCon.classList.add('addButton', 'col-lg-2', 'mt-4')
+        buttonCon.style.cssText = 'cursor : pointer'
+        buttonCon.setAttribute('onclick', buttonObj['buttonFun'])
+
+        buttonCon.style.setProperty('display', 'block', 'important');
+        // Append Delete Button
+        f_row_container.appendChild(buttonCon)
+    }
+}
+
+
+//Add Row
+function dRowAdd(event, schema){
+
+    let parentContainer = event.target.parentNode.parentNode;
+    let rowSchema, buttonCon
+
+    if (parentContainer.parentNode.classList[0] === "accordion-body") {
+        let topAccordianConId = event.target.parentNode.closest('.accordion').parentNode.parentNode.id;
+        let accId = topAccordianConId.includes('_') ? topAccordianConId.split('_')[0] : topAccordianConId
+
+        rowSchema = schema[accId]['row_Schema'][parentContainer.id]['row_Schema'];
+
+        buttonCon = {
+            buttonText: '-',
+            buttonFun: '_deleteRow(event)'
+        };
+    } else {
+        rowSchema = schema[parentContainer.id]['row_Schema'];
+        buttonCon = {
+            buttonText: '-',
+            buttonFun: '_deleteRow(event)'
+        };
+    }
+
+    let parentConId = parentContainer.id;
+    let status = dRow_ValidateSchema(rowSchema);
+    dRow_Create(parentContainer, rowSchema, buttonCon);
+}
+
+
+// Delete
+function dRow_Delete_Accordion(rowContainer){
+    let parentContainer = rowContainer.parentNode
+    parentContainer.removeChild(rowContainer)
+}
+
+
+// Set Options
+function dRow_SetValues(field, valueList){
+   field.innerHTML = ''
+   let optional = document.createElement('option')
+   let fragment = document.createDocumentFragment()
+
+   optional.textContent = '-------'
+   optional.value = ''
+   optional.selected = true
+   optional.disabled = true
+   fragment.appendChild(optional)
+
+   if(valueList && valueList.length !=0){
+      valueList.forEach((val)=>{
+          let option = document.createElement('option')
+          option.textContent = val
+          option.value = val
+          fragment.appendChild(option)
+      })
+      field.appendChild(fragment)
+   }
+}
+
+
+// Validate JSON Schema
+function dRow_ValidateSchema(row_schema){
+    let fieldTypeList = ["text", "email", "number", "password", "date", "time", "date_range", "phone", "multi_select", "single_select"]
+
+    // Validate Name
+    let field_list = new Set()
+    let validate = true
+
+    row_schema.forEach((field_schema)=>{
+
+        if(field_list.has(field_schema.f_display_name)){
+           console.error("Display Name Should be Unique")
+           validate =  false
+        }
+        else {
+            field_list.add(field_schema.f_display_name);
+        }
+
+        if (!fieldTypeList.includes(field_schema.f_type)) {
+            console.error("Type field Invalid ! ");
+            validate = false;
+        }
+
+        if (!field_schema.f_display_name || !field_schema.f_type || !field_schema.f_name) {
+            console.error(`Missing required property in field: ${JSON.stringify(field_schema)}`);
+            validate = false;
+        }
+
+        if (typeof field_schema.f_required !== "boolean") {
+            console.error(`Invalid value for 'f_required'. It should be a boolean: ${field_schema.f_display_name}`);
+            validate = false;
+        }
+
+        if ((field_schema.f_type === "multi_select" || field_schema.f_type === "single_select")
+                && (!Array.isArray(field_schema.v_options))) {
+            console.error(`Options are missing or invalid for field: ${field_schema.f_display_name}`);
+            validate = false;
+        }
+
+    })
+    return validate
+}
+
+// Create Input Field
+function createInputFields(field_schema, row_container){
+    let container = document.createElement('div')
+    container.classList.add(field_schema.f_display_name, `col-lg-${field_schema.f_width}`)
+
+    if(!field_schema.f_display)container.classList.add('d-none')
+    if(field_schema.f_display === "always") container.style.setProperty('display', 'block', 'important');
+
+    let label = document.createElement('label')
+    label.classList.add('form-label', 'fw-bold')
+    label.textContent = field_schema.f_display_name
+
+    let inputTag = document.createElement('input')
+    inputTag.classList.add('form-control', 'ik-txt3', 'py-1')
+    inputTag.name = field_schema.f_name
+    inputTag.type = field_schema.f_type
+    inputTag.value = field_schema.v_default
+    inputTag.setAttribute('onclick', field_schema.a_onChange)
+
+    container.appendChild(label)
+    container.appendChild(inputTag)
+
+     // Apply attributes
+    if (field_schema.f_placeholder) inputTag.placeholder = field_schema.f_placeholder;
+    if (field_schema.v_min !== undefined) inputTag.min = field_schema.v_min;
+    if (field_schema.v_max !== undefined) inputTag.max = field_schema.v_max;
+    if (field_schema.v_min_len !== undefined && inputTag.type !== 'number') inputTag.minLength = field_schema.v_min_len;
+    if (field_schema.v_max_len !== undefined && inputTag.type !== 'number') inputTag.maxLength = field_schema.v_max_len;
+    if (field_schema.f_required) inputTag.required = true;
+
+    row_container.appendChild(container)
+
+}
+
+// Create Single Select DropDown
+function createSingleSelectFields(field_schema, row_container){
+
+    let container = document.createElement('div')
+    if(!field_schema.f_display)container.classList.add('d-none')
+    if(field_schema.f_display === "always") container.style.setProperty('display', 'block', 'important');
+
+    let label = document.createElement('label')
+    label.classList.add('form-label', 'fw-bold')
+    label.textContent = field_schema.f_display_name
+
+    let selectTag = document.createElement('select')
+    selectTag.name = field_schema.f_name
+    selectTag.classList.add('form-select', 'ik-txt3', 'py-1')
+
+    if (field_schema.a_onChange) selectTag.setAttribute('onchange', field_schema.a_onChange);
+    selectTag.required = field_schema.f_required
+
+    container.classList.add(field_schema.f_display_name, `col-lg-${field_schema.f_width}`)
+    container.appendChild(label)
+    container.appendChild(selectTag)
+
+    row_container.appendChild(container)
+
+    //Set Options
+    dRow_SetValues(selectTag, field_schema.v_options)
+    selectTag.value = field_schema.v_default
+
+}
+
+//Create DataList
+function createDataList(field_schema, row_container){
+    let container = document.createElement('div')
+    container.classList.add(field_schema.f_display_name, `col-lg-${field_schema.f_width}`)
+
+    if(!field_schema.f_display)container.classList.add('d-none')
+    if(field_schema.f_display === "always") container.style.setProperty('display', 'block', 'important');
+    row_container.appendChild(container)
+
+    //Create Lable
+    let label = document.createElement('label')
+    label.classList.add('form-label', 'fw-bold')
+    label.textContent = field_schema.f_display_name
+    container.appendChild(label)
+
+    // Create an input element
+    const input = document.createElement("input");
+    input.setAttribute("list", "items");
+    input.setAttribute("id", "myInput");
+    input.setAttribute('name', field_schema.f_name)
+    input.classList.add('form-select', 'ik-txt3', 'py-1')
+    container.appendChild(input);
+
+    // Create a DataList element
+    const dataList = document.createElement("datalist");
+    dataList.setAttribute("id", "items");
+    container.appendChild(dataList);
+
+    // Add options dynamically
+    dRow_SetValues(dataList, field_schema.v_options)
+}
+
+
+// Create Accordion
+function createAccordion(parentContainer, targetConId, displayName, buttonObj) {
+    let topParentContainer = document.createElement('div');
+    topParentContainer.classList.add('row')
+    parentContainer.appendChild(topParentContainer);
+
+   // Accordion Container
+   let accordionCon = document.createElement('div');
+   accordionCon.classList.add('accordion', 'col-lg-12');
+   topParentContainer.appendChild(accordionCon);
+
+
+   // Accordion Item Container
+   let accordionItemCon = document.createElement('div');
+   accordionItemCon.classList.add('accordion-item', 'w-100');
+   accordionCon.appendChild(accordionItemCon);
+
+   // Create Accordion Button
+   let accordionButton = document.createElement('button');
+   accordionButton.classList.add(
+      'accordion-button',
+      'collapsed',
+      'ik-h2',
+      'py-1',
+      'shadow-none',
+      'text-dark',
+      'fw-bold'
+   );
+   accordionButton.type = 'button';
+   accordionButton.id = `${targetConId}-header`;
+   accordionButton.setAttribute('data-bs-toggle', 'collapse');
+   accordionButton.setAttribute('data-bs-target', `#${targetConId}`);
+   accordionButton.setAttribute('aria-expanded', 'false');
+   accordionButton.setAttribute('aria-controls', targetConId);
+   accordionButton.innerHTML = `${displayName}`;
+   accordionItemCon.appendChild(accordionButton);
+
+   // Create Target Element Container
+   let targetCon = document.createElement('div');
+   targetCon.id = targetConId;
+   targetCon.classList.add('accordion-collapse', 'collapse', 'mt-3');
+   targetCon.setAttribute('aria-labelledby', accordionButton.id);
+   targetCon.setAttribute('data-bs-parent', `#${parentContainer.id}`);
+   accordionItemCon.appendChild(targetCon);
+
+   // Create Accordion Body
+   let accordionBody = document.createElement('div');
+   accordionBody.classList.add('accordion-body', 'pt-0');
+   targetCon.appendChild(accordionBody);
+
+    // Create Button
+    if(buttonObj){
+        accordionCon.classList.remove('col-lg-12')
+        accordionCon.classList.add('col-lg-11')
+
+        let buttonCon =  document.createElement('div')
+        buttonCon.textContent = buttonObj['buttonText']
+        buttonCon.classList.add('addButton', 'col-lg-1')
+        buttonCon.style.cssText = 'cursor : pointer'
+        buttonCon.setAttribute('onclick', buttonObj['buttonFun'])
+
+        topParentContainer.appendChild(buttonCon);
+    }
+   return accordionBody;
+}
+
+
+//Add Accordion
+function _accordionAdd(event, schema, count){
+    //Get Form Container
+    let accordionParentId = event.target.parentNode.parentNode.id
+
+    let {e_type, e_display, e_name, row_Schema, group_con} = schema[accordionParentId]
+
+    const groupContainer = event.target.parentNode.parentNode.parentNode
+
+    // Create Dynamic Id
+    let dynamicId = `${accordionParentId.split('_')[0]}_${count}`
+
+    //Create Accordion Parent Container
+    let getCon = dRow_ContainerCreate(groupContainer, dynamicId, schema[accordionParentId])
+
+    //Create Accordion
+    let buttonObj = { buttonText: '-', buttonFun: '_deleteAccordion(event)' }
+    let accordionBody = createAccordion(getCon, `ac-${count}`, `${e_name}-${count}`, buttonObj)
+
+    //Create Accordion Rows
+    Object.keys(row_Schema).forEach((key)=>{
+       let rowParent = dRow_ContainerCreate(accordionBody, key, row_Schema[key])
+       handleDynamicRows(rowParent, row_Schema, key, null)
+    })
+}
+
+
+//Mapping Function
+function mappRows(event){
+    let dependencyRowCon, rowChild;
+
+    let targetTopParent = event.target.parentNode.parentNode.parentNode
+    let topParent = targetTopParent.closest('.row').parentNode
+
+    let labelText = event.target.parentNode.querySelector('label').textContent
+
+    let targetRowSchema  = schema[topParent.id]['row_Schema'][targetTopParent.id]['row_Schema']
+
+    let filterObj = targetRowSchema.find(obj => obj.f_display_name === labelText)
+
+    filterObj['b_rows'].forEach((key)=>{
+        let dependencyRowSchema = schema[topParent.id]['row_Schema'][key]['row_Schema']
+        if(targetTopParent.id === key){
+            dependencyRowCon = targetTopParent
+            rowChild = event.target.parentNode.parentNode.childNodes
+        }
+        else{
+            dependencyRowCon = document.querySelector(`#${key}`)
+            rowChild = dependencyRowCon.querySelector('.row').childNodes
+        }
+
+        dependencyRowCon.style.display = 'block'
+        let keyList = dependencyRowSchema.filter(obj => obj.b_name.includes(event.target.value))
+        .map(obj => obj.f_display_name);
+
+        // Loop through each child node in rowChild
+        Array.from(rowChild).forEach((child) => {
+          const hasMatchingClass = keyList.some((className) => child.classList.contains(className));
+
+          if (hasMatchingClass) child.classList.remove('d-none');
+          else child.classList.add('d-none');
+        });
+    })
+
+}
+
+
+//Get Response
+async function getResponse(method, url, resObj, obj = null, csrfToken = null){
+
+    let formData = new FormData()
+
+    if(obj){
+        for(let key in obj){
+            if(obj.hasOwnProperty(key)){
+                formData.append(key, obj[key])
+            }
+        }
+    }
+    const dataObject = {
+        method,
+        ...(method !== 'GET' && {
+            headers: {
+                ...(csrfToken && { 'X-CSRFToken': csrfToken }),
+            },
+            ...(obj && { body: formData }),
+        }),
+    };
+    try {
+        const res = await fetch(url, dataObject);
+
+        if (!res.ok) {
+            console.error("Invalid response:", res.status, res.statusText);
+            return null;
+        }
+        let response =  await res.json();
+        resObj['response'] = response
+    }
+    catch (error) {
+        console.error("Fetch error:", error);
+        return null;
+    }
+}
+
+//-------------------------------------------JSON Function--------------------------------------------------------------
+
+//Check Row Type
+function checkConType(schema, parentObject, accordionBody = null){
+
+    Object.keys(schema).forEach((key)=>{
+
+       let {e_type, e_name} = schema[key]
+
+       if(e_type === "dynamicRow"){
+          let parentRowCon = accordionBody ? accordionBody.querySelector(`#${key}`) : document.querySelector(`#${key}`)
+          createDynamicRowJson(parentObject, parentRowCon, e_name)
+       }
+
+       if(e_type === "staticRow"){
+          let parentRowCon = accordionBody ? accordionBody.querySelector(`#${key}`) : document.querySelector(`#${key}`)
+          createStaticValueObj(parentRowCon, parentObject)
+       }
+    })
+
+}
+
+
+// Add Static Value
+function createStaticValueObj(parentRowCon, parentObj){
+    let rowCon = parentRowCon.querySelector('.row')
+    let allFieldCon = rowCon.querySelectorAll('div')
+
+    allFieldCon.forEach((con) => {
+      let check = con.classList.contains('d-none');
+      if (!check) {
+        let field = con.querySelector('input, select');
+        if (field) {
+          parentObj[field.name] = field.value;
+        }
+      }
+    });
+
+
+}
+
+// Add Dynamic Value
+function createDynamicRowJson(parentObject, parentRowCon, keyName){
+    let rowCons = parentRowCon.querySelectorAll('.row')
+    let valArray = []
+
+    rowCons.forEach((rowCon, index)=>{
+        let rowVal = {}
+        let allFieldCon = rowCon.querySelectorAll('div')
+        allFieldCon.forEach((con)=>{
+            let check = con.classList.contains('d-none');
+            if (!check) {
+              let field = con.querySelector('input, select')
+              if(field){
+                rowVal[field.name] = field.value
+              }
+            }
+        })
+        valArray.push(rowVal)
+    })
+    parentObject[keyName] = valArray
+}
+
+
+// Define all your functions above...
+
+// Universal Export (for browser + module)
+(function (global, factory) {
+    const lib = factory();
+    
+    // Export for browser
+    if (typeof window !== "undefined") {
+        for (const key in lib) {
+            window[key] = lib[key];
+        }
+    }
+
+    // Export for module
+    if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
+        module.exports = lib;
+    } else {
+        global.MyLibrary = lib;
+    }
+})(typeof window !== "undefined" ? window : global, function () {
+    return {
+        dRow_ContainerCreate,
+        dRow_Create,
+        dRowAdd,
+        dRow_Delete_Accordion,
+        dRow_ValidateSchema,
+        createInputFields,
+        createSingleSelectFields,
+        createDataList,
+        createAccordion,
+        _accordionAdd,
+        mappRows,
+        getResponse,
+        checkConType,
+        createStaticValueObj,
+        createDynamicRowJson
+    };
+});
+
+// --------------------------------------------D MultiSelect  Functions-----------------------------------------------
+// Create Multi Select DropDown
+function dCreateMultiSelect(obj,row_container){
+    let container = document.createElement('div')
+    if(!obj["f_display"]) container.classList.add('d-none')
+ 
+    let hidden_input = document.createElement('input')
+    hidden_input.classList.add('d-none')
+    hidden_input.name = obj.f_name
+    hidden_input.value = JSON.stringify([]);
+ 
+    container.classList.add(obj.f_display_name, `col-lg-${obj.f_width}`)
+ 
+    let label = document.createElement('label')
+    label.classList.add('form-label',  'fw-bold')
+    label.textContent = obj.f_display_name
+ 
+    let optionList = document.createElement('div')
+    optionList.classList.add('list', 'form-select', 'ik-txt3')
+    optionList.style.cssText = 'position: relative; height: 28px; padding: 0px'
+    optionList.setAttribute('onclick', obj.a_onChange);
+ 
+    let para = document.createElement('p')
+    para.classList.add('ml-2', 'mt-1')
+    para.textContent = '-------'
+ 
+    let optionItems =  document.createElement('div')
+    optionItems.classList.add('d-none', 'items')
+    optionItems.style.cssText = "position: absolute; top: -25px; height: 18vh; overflow: scroll; background-color: white; box-shadow : 0px 4px 12px rgba(0, 0, 0, 0.2); border : 1px solid rgba(0, 0, 0, 0.3); width:18vw;";
+    optionList.appendChild(para)
+    optionList.appendChild(hidden_input)
+    optionList.appendChild(optionItems)
+ 
+    container.appendChild(label)
+    container.appendChild(optionList)
+ 
+    row_container.appendChild(container)
+    if(obj.v_options.length != 0){
+       dCreateMultiSelectOption(optionItems, obj.v_options)
+    }
+ }
+ 
+ 
+ // Create MultiSelect Options
+ function dCreateMultiSelectOption(container, list){
+     container.innerHTML = ''
+     let fragment = document.createDocumentFragment()
+ 
+     let buttonDiv = document.createElement('div')
+     buttonDiv.classList.add('d-flex', 'justify-between')
+     buttonDiv.style.cssText = "border-bottom : 1px solid rgba(0, 0, 0, 0.3);"
+     fragment.appendChild(buttonDiv)
+ 
+     let selectAllButton = document.createElement('button')
+     selectAllButton.type = 'button'
+     selectAllButton.classList.add('btn')
+     selectAllButton.style.cssText = "padding: 2px; width: 126px; font-weight: bold;"
+     selectAllButton.setAttribute('onclick', 'selectAllOptions(event)')
+     selectAllButton.textContent = `SelectAll`
+ 
+     let clearAllButton = document.createElement('button')
+     clearAllButton.type = 'button'
+     clearAllButton.classList.add('btn')
+     clearAllButton.style.cssText = "padding: 2px; width: 126px; font-weight: bold;"
+     clearAllButton.setAttribute('onclick', 'clearAllOptions(event)')
+     clearAllButton.textContent = `ClearAll`
+ 
+     let closeAllButton = document.createElement('button')
+     closeAllButton.type = 'button'
+     closeAllButton.classList.add('btn')
+     closeAllButton.style.cssText = "padding: 2px; width: 126px; font-weight: bold;"
+     closeAllButton.setAttribute('onclick', 'closeDropDown(event)')
+     closeAllButton.textContent = `Close`
+ 
+     buttonDiv.appendChild(selectAllButton)
+     buttonDiv.appendChild(clearAllButton)
+     buttonDiv.appendChild(closeAllButton)
+ 
+     list.forEach((val)=>{
+         let button = document.createElement('button')
+         button.classList.add("selectable", 'col-md-12', 'btn', 'text-dark',  'text-start','py-0')
+         button.value = `${val}`
+         button.type = 'button'
+         button.setAttribute('onclick', 'selectMultipleOption(this)')
+ 
+         let span = document.createElement('span')
+         span.innerText = `${val}`
+ 
+         let i = document.createElement('i')
+         i.classList.add('text-dark')
+ 
+         span.appendChild(i)
+         button.appendChild(span)
+         fragment.appendChild(button)
+     })
+     container.appendChild(fragment)
+ }
+ 
+ 
+ // Toggle Multiple Option
+ function dToggleMultiOption(button, optionContainer){
+     button.classList.toggle('selected');
+ 
+     const buttonText = button.querySelector('span');
+     const i = button.querySelector('span i');
+ 
+     i.classList.toggle('bi-check');
+     i.classList.toggle('text-dark');
+ 
+     if (button.classList.contains('selected')) {
+         button.style.backgroundColor = '#e8e8e8';
+         dAddMultiSelectOption(button.value, optionContainer);
+     }
+     else {
+         button.style.backgroundColor = '';
+         dRemoveMultiSelectOption(button.value, optionContainer);
+     }
+ }
+ 
+ 
+ // Add MultiSelect Option
+ function dAddMultiSelectOption(value, optionContainer) {
+ 
+     let para = optionContainer.querySelector('p');
+     let input = optionContainer.querySelector('input');
+ 
+     let jsonInput = JSON.parse(input.value || "[]")
+ 
+     if(!jsonInput.includes(value)){
+         jsonInput.push(value)
+     }
+ 
+     const newValue = JSON.stringify(jsonInput);
+     input.value = newValue;
+     input.setAttribute('value', newValue);
+     para.textContent = jsonInput.length <= 2 ? jsonInput.join(", ") : `${jsonInput.length} Selected`;
+ }
+ 
+ 
+ // Remove MultiSelect Option
+ function dRemoveMultiSelectOption(value, optionContainer){
+     let para = optionContainer.querySelector('p')
+ 
+     let input = optionContainer.querySelector('input');
+     let jsonInput = JSON.parse(input.value)
+ 
+     let index = jsonInput.indexOf(value)
+     jsonInput.splice(index, 1)
+ 
+     const newValue = JSON.stringify(jsonInput);
+     input.value = newValue;
+     input.setAttribute('value', newValue);
+ 
+     para.textContent = jsonInput.length <= 2 ? jsonInput.join(", ") : `${jsonInput.length} Selected`;
+     if(jsonInput.length <= 0) para.textContent = '--------'
+ }
+ 
+ 
+ // Add All Select Options
+ function dAddMultipleOptions(optionContainer, list){
+ 
+     let buttonContainer = optionContainer.querySelector('div')
+     const buttons = buttonContainer.querySelectorAll('button');
+ 
+     buttons.forEach(btn => {
+         const spanI = btn.querySelector('span i');
+         if (list.includes(btn.value)){
+             spanI.classList.add('bi-check');
+             spanI.classList.add('text-dark');
+             btn.classList.add('selected');
+             btn.style.backgroundColor = '#e8e8e8';
+ 
+             //Add Value
+             dAddMultiSelectOption(btn.value, optionContainer);
+         }
+     });
+ 
+ }
+ 
+ 
+ //Clear All
+ function dClearAll(optionList, optionContainer){
+     let buttonContainer = optionContainer.querySelector('div')
+     let click = new Event('click')
+ 
+     optionList.forEach(op => dRemoveMultiSelectOption(op, optionContainer))
+     const buttons = buttonContainer.querySelectorAll('button');
+ 
+     buttons.forEach((button)=>{
+         if(button.classList.contains('selected')){
+              button.classList.remove('selected')
+              button.style.backgroundColor = ''
+              const buttonText = button.querySelector('span');
+              const i = button.querySelector('span i');
+              i.classList.toggle('bi-check');
+              i.classList.toggle('text-dark');
+         }
+     })
+ }
+ 
+ 
+ //Create And Set Dynamic Options
+ function createDynamicOptions(event, optionList){
+     let container = event.currentTarget.querySelector('div');
+     let list = container.parentNode.querySelector('input')
+     container.classList.toggle('d-none');
+ 
+     dCreateMultiSelectOption(container, optionList)
+     let inputVal = container.parentNode.querySelector('input').value
+ 
+     const buttons = container.querySelectorAll('button');
+     buttons.forEach(btn => {
+         const spanI = btn.querySelector('span i');
+         if (JSON.parse(inputVal).includes(btn.value)){
+             spanI.classList.add('bi-check');
+             spanI.classList.add('text-dark');
+             btn.classList.add('selected');
+             btn.style.backgroundColor = '#e8e8e8';
+         }
+     });
+ }
+ 
+ 
+ window.dCreateMultiSelect = dCreateMultiSelect;
+ window.dCreateMultiSelectOption = dCreateMultiSelectOption;
+ window.dToggleMultiOption = dToggleMultiOption;
+ window.dAddMultiSelectOption = dAddMultiSelectOption;
+ window.dRemoveMultiSelectOption = dRemoveMultiSelectOption;
+ window.dAddMultipleOptions = dAddMultipleOptions;
+ window.dClearAll = dClearAll;
+ window.createDynamicOptions = createDynamicOptions;
