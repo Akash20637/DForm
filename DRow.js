@@ -493,21 +493,42 @@ function createDynamicRowJson(parentObject, parentRowCon, keyName){
 }
 
 
-// Function Export For Both
+// Define all your functions above...
+
+// Universal Export (for browser + module)
 (function (global, factory) {
+    const lib = factory();
+    
+    // Export for browser
+    if (typeof window !== "undefined") {
+        for (const key in lib) {
+            window[key] = lib[key];
+        }
+    }
+
+    // Export for module
     if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
-        module.exports = factory();
+        module.exports = lib;
     } else {
-        global.MyLibrary = factory();
+        global.MyLibrary = lib;
     }
 })(typeof window !== "undefined" ? window : global, function () {
     return {
-        dRow_ValidateSchema,
         dRow_ContainerCreate,
+        dRow_Create,
+        dRowAdd,
+        dRow_Delete_Accordion,
+        dRow_ValidateSchema,
         createInputFields,
         createSingleSelectFields,
-        dRow_SetValues,
+        createDataList,
         createAccordion,
-        dRow_Create
+        _accordionAdd,
+        mappRows,
+        getResponse,
+        checkConType,
+        createStaticValueObj,
+        createDynamicRowJson
     };
 });
+

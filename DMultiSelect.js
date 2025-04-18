@@ -218,3 +218,13 @@ function createDynamicOptions(event, optionList){
         }
     });
 }
+
+
+window.dCreateMultiSelect = dCreateMultiSelect;
+window.dCreateMultiSelectOption = dCreateMultiSelectOption;
+window.dToggleMultiOption = dToggleMultiOption;
+window.dAddMultiSelectOption = dAddMultiSelectOption;
+window.dRemoveMultiSelectOption = dRemoveMultiSelectOption;
+window.dAddMultipleOptions = dAddMultipleOptions;
+window.dClearAll = dClearAll;
+window.createDynamicOptions = createDynamicOptions;
